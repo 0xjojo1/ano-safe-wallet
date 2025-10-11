@@ -1,0 +1,16 @@
+{
+  "name": "@workspace/wallet",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.2",
+    "@web3-onboard/core": "^2.24.1",
+    "@web3-onboard/injected-wallets": "^2.11.3",
+    "@web3-onboard/react": "^2.11.0",
+    "@web3-onboard/wagmi": "^2.0.1",
+    "viem": "~2.37.9",
+    "wagmi": "^2.18.0"
+  }
+}
