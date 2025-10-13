@@ -2,10 +2,9 @@
 
 import * as React from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { Web3OnboardProvider } from '@web3-onboard/react';
-import { web3Onboard } from '@/lib/onboard-config';
+import MyWeb3OnboardProvider from '@/lib/web3-onboard';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@workspace/ui/components/sidebar';
-import { AppSidebar } from './sidebar/AppSiderbar';
+import { AppSidebar } from '@/components/sidebar/AppSiderbar';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +15,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      <Web3OnboardProvider web3Onboard={web3Onboard}>
+      <MyWeb3OnboardProvider>
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
@@ -25,10 +24,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <SidebarTrigger />
               </div>
             </header>
-            <main>{children}</main>
+            <main className='p-2'>{children}</main>
           </SidebarInset>
         </SidebarProvider>
-      </Web3OnboardProvider>
+      </MyWeb3OnboardProvider>
     </NextThemesProvider>
   );
 }

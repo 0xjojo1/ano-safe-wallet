@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@workspace/ui/components/button';
 import {
   SidebarContent,
   SidebarGroup,
@@ -13,6 +12,8 @@ import {
 } from '@workspace/ui/components/sidebar';
 import { ArrowLeftRight, Coins, Gauge, HelpCircle, ListTodoIcon, Plus, Search, Settings, Wallet } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import { NavSafeSelect } from './nav/nav-safe-select';
+import { SafeAccountInfo } from '@workspace/types/safe/account';
 
 const baseItems = [
   {
@@ -68,32 +69,38 @@ const bottomItems = [
   },
 ];
 
+const mockSafeAccounts: SafeAccountInfo[] = [
+  {
+    chainId: 1,
+    address: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
+    nonce: '1',
+    threshold: 1,
+    owners: ['0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128'],
+    singleton: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
+    modules: ['0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128'],
+    fallbackHandler: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
+    guard: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
+    version: '1',
+  },
+];
+
 export function AppSidebarContent({ showAccountsSelect = false }: { showAccountsSelect?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
   const { state } = useSidebar();
 
+  const isCollapsed = state === 'collapsed';
+
   return (
     <SidebarContent className='flex flex-col justify-between'>
       <div>
-        {showAccountsSelect && (
+        {showAccountsSelect && !isCollapsed && (
           <SidebarGroup>
-            <SidebarGroupContent className='flex flex-col gap-2'>
-              <SidebarMenu>
-                <SidebarMenuItem className='flex items-center gap-2'>
-                  <SidebarMenuButton
-                    tooltip='Quick Create'
-                    className='bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear'
-                  >
-                    <span>Quick Create</span>
-                  </SidebarMenuButton>
-                  <Button size='icon' className='size-8 group-data-[collapsible=icon]:opacity-0' variant='outline'>
-                    <ArrowLeftRight />
-                    <span className='sr-only'>Inbox</span>
-                  </Button>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
+            <NavSafeSelect
+              safeAccounts={mockSafeAccounts}
+              currentAccount={mockSafeAccounts[0]?.address || ''}
+              onSelectAccount={() => {}}
+            />
           </SidebarGroup>
         )}
         <SidebarGroup>
@@ -103,7 +110,7 @@ export function AppSidebarContent({ showAccountsSelect = false }: { showAccounts
               {baseItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    tooltip={state === 'collapsed' ? item.title : undefined}
+                    tooltip={isCollapsed ? item.title : undefined}
                     asChild
                     isActive={pathname === item.url}
                     onClick={() => router.push(item.url)}
@@ -125,7 +132,7 @@ export function AppSidebarContent({ showAccountsSelect = false }: { showAccounts
               {transactionItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    tooltip={state === 'collapsed' ? item.title : undefined}
+                    tooltip={isCollapsed ? item.title : undefined}
                     asChild
                     isActive={pathname === item.url}
                     onClick={() => router.push(item.url)}

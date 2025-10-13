@@ -1,8 +1,9 @@
-import Onboard, { OnboardAPI } from '@web3-onboard/core';
+import { OnboardAPI } from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
-import { init } from '@web3-onboard/react';
+import { Web3OnboardProvider, init } from '@web3-onboard/react';
+import wagmi from '@web3-onboard/wagmi';
 
-const MAINNET_RPC_URL = 'https://mainnet.infura.io/v3/<INFURA_KEY>';
+const MAINNET_RPC_URL = 'https://mainnet.infura.io/v3/2b651335cb1a4e46b347641dad274135';
 
 const injected = injectedModule();
 
@@ -19,7 +20,7 @@ const chains = [
     id: 11155111,
     token: 'ETH',
     label: 'Sepolia',
-    rpcUrl: 'https://rpc.sepolia.org/',
+    rpcUrl: 'https://sepolia.infura.io/v3/2b651335cb1a4e46b347641dad274135',
   },
   {
     id: '0x13881',
@@ -80,3 +81,9 @@ export const web3Onboard: OnboardAPI = init({
   chains,
   appMetadata,
 });
+
+function MyWeb3OnboardProvider({ children }: { children: React.ReactNode }) {
+  return <Web3OnboardProvider web3Onboard={web3Onboard}>{children}</Web3OnboardProvider>;
+}
+
+export default MyWeb3OnboardProvider;

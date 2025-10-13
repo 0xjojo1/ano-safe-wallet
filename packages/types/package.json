@@ -1,0 +1,16 @@
+{
+    "name": "@workspace/types",
+    "type": "module",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        "./safe/account": {
+            "types": "./src/safe/account.ts",
+            "default": "./src/safe/account.ts"
+        }
+    },
+    "devDependencies": {
+        "@workspace/typescript-config": "workspace:*",
+        "typescript": "latest"
+    }
+}
