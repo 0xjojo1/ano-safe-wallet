@@ -7,6 +7,10 @@
         "./safe/account": {
             "types": "./src/safe/account.ts",
             "default": "./src/safe/account.ts"
+        },
+        "./addressbook/contact": {
+            "types": "./src/addressbook/contact.ts",
+            "default": "./src/addressbook/contact.ts"
         }
     },
     "devDependencies": {

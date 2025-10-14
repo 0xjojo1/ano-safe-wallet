@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@workspace/ui/components/button';
 import { SidebarGroupContent, SidebarMenuButton, SidebarMenu, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 import { ArrowLeftRight, BadgeCheckIcon, Plus, WalletMinimal } from 'lucide-react';
@@ -13,7 +15,8 @@ import {
 } from '@workspace/ui/components/dialog';
 import { formatAddressShort } from '@/utils/address';
 import { Badge } from '@workspace/ui/components/badge';
-import { SafeSimpleCard } from '@workspace/ui/components/safe/safe-simple-card';
+import { SafeSimpleItem } from '@workspace/ui/components/safe/safe-simple-item';
+import { useRouter } from 'next/navigation';
 
 interface NavSafeSelectProps {
   safeAccounts: SafeAccountInfo[];
@@ -22,9 +25,14 @@ interface NavSafeSelectProps {
 }
 
 export function NavSafeSelect({ safeAccounts, currentAccount, onSelectAccount }: NavSafeSelectProps) {
+  const router = useRouter();
   //   if (!safeAccounts || safeAccounts.length === 0) {
   //     return <EmptyState />;
   //   }
+
+  function handleAccountDetails() {
+    router.push(`/accounts/${currentAccount}`);
+  }
 
   return (
     <SidebarGroupContent className='flex flex-col gap-2'>
@@ -33,6 +41,7 @@ export function NavSafeSelect({ safeAccounts, currentAccount, onSelectAccount }:
           <SidebarMenuButton
             asChild
             className='relative bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear'
+            onClick={() => handleAccountDetails()}
           >
             <a href='#'>
               <WalletMinimal />
@@ -90,7 +99,7 @@ function SafeAccountsSelectDialog({ safeAccounts, currentAccount, onSelectAccoun
         </DialogHeader>
 
         {safeAccounts.map((safeAccount) => (
-          <SafeSimpleCard key={safeAccount.address} {...safeAccount} />
+          <SafeSimpleItem key={safeAccount.address} {...safeAccount} chainId='Ethereum' alias='Life Wallet' />
         ))}
       </DialogContent>
     </Dialog>

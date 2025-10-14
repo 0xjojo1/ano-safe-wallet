@@ -9,9 +9,9 @@ export function AppSidebarHeader() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild className='data-[slot=sidebar-menu-button]:!p-1.5'>
-            <a href='#'>
-              <ScanEye className='!size-5' />
-              <span className='text-base font-semibold'>Ano Safe</span>
+            <a href='/'>
+              <ScanEye className='!size-6' />
+              <span className='text-lg font-semibold'>Ano Safe</span>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>

@@ -10,7 +10,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@workspace/ui/components/sidebar';
-import { ArrowLeftRight, Coins, Gauge, HelpCircle, ListTodoIcon, Plus, Search, Settings, Wallet } from 'lucide-react';
+import {
+  ArrowLeftRight,
+  ArrowUpDown,
+  BookUser,
+  Coins,
+  Gauge,
+  HelpCircle,
+  ListTodoIcon,
+  Plus,
+  Search,
+  Settings,
+  Wallet,
+} from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { NavSafeSelect } from './nav/nav-safe-select';
 import { SafeAccountInfo } from '@workspace/types/safe/account';
@@ -23,13 +35,18 @@ const baseItems = [
   },
   {
     title: 'Accounts',
-    url: '/wallets',
+    url: '/accounts',
     icon: Wallet,
   },
   {
     title: 'Assets',
     url: '/assets',
     icon: Coins,
+  },
+  {
+    title: 'Address Book',
+    url: '/address-book',
+    icon: BookUser,
   },
 ];
 
@@ -47,7 +64,7 @@ const transactionItems = [
   {
     title: 'History',
     url: '/transactions/history',
-    icon: ArrowLeftRight,
+    icon: ArrowUpDown,
   },
 ];
 
@@ -80,7 +97,7 @@ const mockSafeAccounts: SafeAccountInfo[] = [
     modules: ['0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128'],
     fallbackHandler: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
     guard: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
-    version: '1',
+    version: '1.4.1+L2',
   },
 ];
 

@@ -21,6 +21,8 @@ export default function ConnectWallet({ size = 'default' }: { size?: 'minimal' |
     return (
       <NavUser
         address={formatAddressShort(wallet.accounts[0]?.address ?? '', 0, 6)}
+        walletName={wallet.label}
+        handleSwitchWallet={() => connect()}
         chainId={connectedChain.connectedChain?.id ? parseInt(connectedChain.connectedChain.id) : 0}
         chainName={chainInfo?.name ?? ''}
         disconnect={() => disconnect(wallet)}

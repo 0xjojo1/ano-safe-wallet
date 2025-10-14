@@ -5,6 +5,8 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import MyWeb3OnboardProvider from '@/lib/web3-onboard';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@workspace/ui/components/sidebar';
 import { AppSidebar } from '@/components/sidebar/AppSiderbar';
+import { AppBreadcrumb } from './app-bread-crumb';
+import { ChainSelect } from './chain-select';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -20,11 +22,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <AppSidebar />
           <SidebarInset>
             <header>
-              <div className='flex items-center p-4 border-b h-12 flex-shrink-0'>
-                <SidebarTrigger />
+              <div className='flex items-center justify-between p-4 border-b h-12 flex-shrink-0 gap-2'>
+                <div className='flex items-center gap-2'>
+                  <SidebarTrigger />
+                  <AppBreadcrumb />
+                </div>
+                <ChainSelect />
               </div>
             </header>
-            <main className='p-2'>{children}</main>
+            <main className='p-6'>{children}</main>
           </SidebarInset>
         </SidebarProvider>
       </MyWeb3OnboardProvider>
