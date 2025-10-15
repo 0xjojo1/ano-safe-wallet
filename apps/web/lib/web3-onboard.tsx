@@ -1,7 +1,6 @@
 import { OnboardAPI } from '@web3-onboard/core';
 import injectedModule from '@web3-onboard/injected-wallets';
 import { Web3OnboardProvider, init } from '@web3-onboard/react';
-
 import * as chains from 'viem/chains';
 
 const injected = injectedModule();

@@ -1,7 +1,9 @@
+import { SectionCards } from '@/components/dashboard/section-cards';
+
 export default function AccountsPage() {
   return (
     <div>
-      <h1>Accounts</h1>
+      <SectionCards />
     </div>
   );
 }

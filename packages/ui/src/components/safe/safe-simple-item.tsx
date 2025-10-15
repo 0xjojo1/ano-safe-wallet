@@ -1,12 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { Copy, Users, List, Grid3x3, Tag, CircleCheck, Circle } from 'lucide-react';
-import { cn } from '@workspace/ui/lib/utils';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
+
+import { Circle, CircleCheck, Copy, Grid3x3, List, Tag, Users } from 'lucide-react';
 
 import { AddressBook } from '@workspace/types/addressbook/contact';
+import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
+import { cn } from '@workspace/ui/lib/utils';
 
 export interface SafeSimpleItemProps {
   chainId: string;

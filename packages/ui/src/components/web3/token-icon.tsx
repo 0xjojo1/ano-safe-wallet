@@ -1,19 +1,19 @@
 import {
-  TokenETHM,
-  TokenPOLY,
+  TokenAAVE,
   TokenARB,
-  TokenOPTI,
   TokenBS,
+  TokenCRV,
+  TokenDAI,
+  TokenETHM,
+  TokenGNO,
   TokenICE,
   TokenLAUNCH,
-  TokenGNO,
+  TokenLINK,
+  TokenOPTI,
+  TokenPOLY,
+  TokenUNI,
   TokenUSDC,
   TokenUSDT,
-  TokenDAI,
-  TokenLINK,
-  TokenUNI,
-  TokenAAVE,
-  TokenCRV,
 } from '@web3icons/react';
 
 export function getTokenIcon({

@@ -1,6 +1,7 @@
 'use client';
 
-import { SidebarFooter, SidebarMenuItem, SidebarMenu, useSidebar } from '@workspace/ui/components/sidebar';
+import { SidebarFooter, SidebarMenu, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
+
 import ConnectWallet from '@/components/connect-wallet';
 
 export function AppSidebarFooter() {

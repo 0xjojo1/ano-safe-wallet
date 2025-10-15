@@ -1,10 +1,12 @@
 'use client';
 
-import { Button } from '@workspace/ui/components/button';
-import { SidebarGroupContent, SidebarMenuButton, SidebarMenu, SidebarMenuItem } from '@workspace/ui/components/sidebar';
-import { ArrowLeftRight, BadgeCheckIcon, Plus, WalletMinimal } from 'lucide-react';
-import { SafeAccountInfo } from '@workspace/types/safe/account';
+import { useRouter } from 'next/navigation';
 
+import { ArrowLeftRight, BadgeCheckIcon, Plus, WalletMinimal } from 'lucide-react';
+
+import { SafeAccountInfo } from '@workspace/types/safe/account';
+import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
 import {
   Dialog,
   DialogContent,
@@ -13,10 +15,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@workspace/ui/components/dialog';
-import { formatAddressShort } from '@/utils/address';
-import { Badge } from '@workspace/ui/components/badge';
 import { SafeSimpleItem } from '@workspace/ui/components/safe/safe-simple-item';
-import { useRouter } from 'next/navigation';
+import { SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@workspace/ui/components/sidebar';
+
+import { formatAddressShort } from '@/utils/address';
 
 interface NavSafeSelectProps {
   safeAccounts: SafeAccountInfo[];

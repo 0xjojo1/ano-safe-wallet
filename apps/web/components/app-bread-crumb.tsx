@@ -1,8 +1,10 @@
 'use client';
 
 import React from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,9 +21,7 @@ const routeConfig: Record<string, { label: string; clickable?: boolean }> = {
   '/accounts': { label: 'Accounts' },
   '/accounts/create': { label: 'Create Account' },
   '/accounts/[account]': { label: 'Details' },
-
   '/address-book': { label: 'Address Book' },
-
   '/transactions': { label: 'Transactions', clickable: false },
   '/transactions/new': { label: 'New Transaction' },
   '/transactions/queue': { label: 'Queue' },
@@ -80,7 +80,6 @@ export function AppBreadcrumb() {
 
   return (
     <>
-      <Separator orientation='vertical' className='mr-2 data-[orientation=vertical]:h-4' />
       <Breadcrumb>
         <BreadcrumbList>
           {items.map((item) => (

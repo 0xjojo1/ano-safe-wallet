@@ -1,5 +1,6 @@
 export type SafeAccountInfo = {
   chainId: number;
+  chainName: string;
   address: string;
   nonce: string;
   threshold: number;

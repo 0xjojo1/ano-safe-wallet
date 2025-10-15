@@ -12,5 +12,24 @@
   "quoteProps": "as-needed",
   "bracketSameLine": false,
   "htmlWhitespaceSensitivity": "css",
-  "proseWrap": "preserve"
+  "proseWrap": "preserve",
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-packagejson"
+  ],
+  "importOrder": [
+    "^react$",
+    "^next",
+    "<THIRD_PARTY_MODULES>",
+    "^@workspace/(.*)$",
+    "^@/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderParserPlugins": [
+    "typescript",
+    "jsx",
+    "decorators-legacy"
+  ]
 }

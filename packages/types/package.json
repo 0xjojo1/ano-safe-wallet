@@ -1,20 +1,20 @@
 {
-    "name": "@workspace/types",
-    "type": "module",
-    "version": "0.0.0",
-    "private": true,
-    "exports": {
-        "./safe/account": {
-            "types": "./src/safe/account.ts",
-            "default": "./src/safe/account.ts"
-        },
-        "./addressbook/contact": {
-            "types": "./src/addressbook/contact.ts",
-            "default": "./src/addressbook/contact.ts"
-        }
+  "name": "@workspace/types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./safe/account": {
+      "types": "./src/safe/account.ts",
+      "default": "./src/safe/account.ts"
     },
-    "devDependencies": {
-        "@workspace/typescript-config": "workspace:*",
-        "typescript": "latest"
+    "./addressbook/contact": {
+      "types": "./src/addressbook/contact.ts",
+      "default": "./src/addressbook/contact.ts"
     }
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "latest"
+  }
 }

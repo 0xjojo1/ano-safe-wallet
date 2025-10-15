@@ -1,7 +1,8 @@
 'use client';
 
-import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 import { ScanEye } from 'lucide-react';
+
+import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 
 export function AppSidebarHeader() {
   return (

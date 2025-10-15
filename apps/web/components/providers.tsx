@@ -1,10 +1,14 @@
 'use client';
 
 import * as React from 'react';
+
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import MyWeb3OnboardProvider from '@/lib/web3-onboard';
+
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@workspace/ui/components/sidebar';
+
 import { AppSidebar } from '@/components/sidebar/AppSiderbar';
+import MyWeb3OnboardProvider from '@/lib/web3-onboard';
+
 import { AppBreadcrumb } from './app-bread-crumb';
 import { ChainSelect } from './chain-select';
 

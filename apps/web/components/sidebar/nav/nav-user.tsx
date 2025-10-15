@@ -1,21 +1,24 @@
 'use client';
 
 import * as React from 'react';
+
 import {
-  MoreVertical,
-  UserCircle,
-  CreditCard,
-  Bell,
-  LogOut,
-  Copy,
-  Check,
-  Wallet,
-  Network,
-  Cable,
   ArrowLeftRightIcon,
+  Bell,
+  Cable,
+  Check,
+  Copy,
+  CreditCard,
+  LogOut,
+  MoreVertical,
+  Network,
+  UserCircle,
+  Wallet,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,10 +28,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
-import { Button } from '@workspace/ui/components/button';
-import { Badge } from '@workspace/ui/components/badge';
 import { Label } from '@workspace/ui/components/label';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
 
 export function NavUser({
   address,

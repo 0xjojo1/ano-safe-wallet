@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@workspace/ui/components/select';
-
 import { NetworkIcon } from '@workspace/ui/components/web3/network-icon';
 
 export function ChainSelect() {

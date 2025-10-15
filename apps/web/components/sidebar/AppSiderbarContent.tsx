@@ -1,15 +1,7 @@
 'use client';
 
-import {
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenuButton,
-  SidebarMenu,
-  SidebarGroupContent,
-  SidebarMenuItem,
-  useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { usePathname, useRouter } from 'next/navigation';
+
 import {
   ArrowLeftRight,
   ArrowUpDown,
@@ -23,9 +15,20 @@ import {
   Settings,
   Wallet,
 } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import { NavSafeSelect } from './nav/nav-safe-select';
+
 import { SafeAccountInfo } from '@workspace/types/safe/account';
+import {
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from '@workspace/ui/components/sidebar';
+
+import { NavSafeSelect } from './nav/nav-safe-select';
 
 const baseItems = [
   {

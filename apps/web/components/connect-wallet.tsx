@@ -1,12 +1,14 @@
 'use client';
 
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import { LogIn } from 'lucide-react';
+
 import { Button } from '@workspace/ui/components/button';
 
-import { LogIn } from 'lucide-react';
-import { NavUser } from './sidebar/nav/nav-user';
-import { extractChainInfo } from '@/utils/chain';
 import { formatAddressShort } from '@/utils/address';
+import { extractChainInfo } from '@/utils/chain';
+
+import { NavUser } from './sidebar/nav/nav-user';
 
 export default function ConnectWallet({ size = 'default' }: { size?: 'minimal' | 'default' }) {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();

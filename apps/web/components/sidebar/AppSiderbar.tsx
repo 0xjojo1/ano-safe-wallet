@@ -1,10 +1,12 @@
 'use client';
 
-import { AppSidebarHeader } from './AppSiderbarHeader';
-import { AppSidebarFooter } from './AppSiderbarFooter';
-import { AppSidebarContent } from './AppSiderbarContent';
-import { Sidebar } from '@workspace/ui/components/sidebar';
 import { useConnectWallet } from '@web3-onboard/react';
+
+import { Sidebar } from '@workspace/ui/components/sidebar';
+
+import { AppSidebarContent } from './AppSiderbarContent';
+import { AppSidebarFooter } from './AppSiderbarFooter';
+import { AppSidebarHeader } from './AppSiderbarHeader';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [{ wallet }] = useConnectWallet();

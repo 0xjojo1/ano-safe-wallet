@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
-import { Separator } from '@workspace/ui/components/separator';
-import { Label } from '@workspace/ui/components/label';
+
+import { useParams } from 'next/navigation';
+
+import { Check, Edit, Package, Plus, Shield, Trash2, Users, X } from 'lucide-react';
+import { isAddress } from 'viem';
+
+import { SafeAccountInfo } from '@workspace/types/safe/account';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,56 +19,52 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@workspace/ui/components/alert-dialog';
-import { Copy, Plus, Trash2, Edit, Check, X, Users, Shield, Package } from 'lucide-react';
-import { SafeAccountInfo } from '@workspace/types/safe/account';
-import { formatAddressShort } from '@/utils/address';
-import { isAddress } from 'viem';
+import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
+import { CopyButton } from '@workspace/ui/components/common/copy-button';
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+} from '@workspace/ui/components/field';
+import { Input } from '@workspace/ui/components/input';
 
-const CHAIN_NAMES: Record<number, string> = {
-  1: 'Ethereum Mainnet',
-  5: 'Goerli',
-  11155111: 'Sepolia',
-  137: 'Polygon',
-  80001: 'Mumbai',
-  42161: 'Arbitrum One',
-  421613: 'Arbitrum Goerli',
-  10: 'Optimism',
-  420: 'Optimism Goerli',
-  8453: 'Base',
-  84531: 'Base Goerli',
-  100: 'Gnosis Chain',
-};
+export default function AccountPage() {
+  // Get account address from URL params
+  const params = useParams();
+  const account = params.account as string;
 
-const mockSafeInfo: SafeAccountInfo = {
-  chainId: 1,
-  address: '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
-  nonce: '5',
-  threshold: 2,
-  owners: [
-    '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
-    '0x1234567890123456789012345678901234567890',
-    '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-  ],
-  singleton: '0x3E5c63644E683549055b9Be8653de26E0B4CD36E',
-  modules: ['0x9999999999999999999999999999999999999999'],
-  fallbackHandler: '0xf48f2B2d2a534e402487b3ee7C18c33Aec0Fe5e4',
-  guard: '0x0000000000000000000000000000000000000000',
-  version: '1.4.1+L2',
-};
-
-export default function AccountPage({ params }: { params: Promise<{ account: string }> }) {
+  const mockSafeInfo: SafeAccountInfo = {
+    chainId: 1,
+    chainName: 'Ethereum Mainnet',
+    address: account || '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
+    nonce: '5',
+    threshold: 2,
+    owners: [
+      '0x0d5380f2b3b1d6ed63cef0b04b149e7fc9040128',
+      '0x1234567890123456789012345678901234567890',
+      '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+    ],
+    singleton: '0x3E5c63644E683549055b9Be8653de26E0B4CD36E',
+    modules: ['0x9999999999999999999999999999999999999999'],
+    fallbackHandler: '0xf48f2B2d2a534e402487b3ee7C18c33Aec0Fe5e4',
+    guard: '0x0000000000000000000000000000000000000000',
+    version: '1.4.1+L2',
+  };
   const [safeInfo, setSafeInfo] = useState<SafeAccountInfo>(mockSafeInfo);
+  const [alias, setAlias] = useState('My Safe Account');
+  const [isEditingAlias, setIsEditingAlias] = useState(false);
+  const [editAliasValue, setEditAliasValue] = useState(alias);
   const [isEditingThreshold, setIsEditingThreshold] = useState(false);
   const [editThresholdValue, setEditThresholdValue] = useState(safeInfo.threshold);
   const [newOwnerAddress, setNewOwnerAddress] = useState('');
-  const [newModuleAddress, setNewModuleAddress] = useState('');
-  const [copied, setCopied] = useState<string | null>(null);
-
-  const copyToClipboard = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(text);
-    setTimeout(() => setCopied(null), 2000);
-  };
 
   const handleAddOwner = () => {
     if (!newOwnerAddress.trim()) {
@@ -104,6 +101,25 @@ export default function AccountPage({ params }: { params: Promise<{ account: str
     });
   };
 
+  const handleStartEditAlias = () => {
+    setEditAliasValue(alias);
+    setIsEditingAlias(true);
+  };
+
+  const handleSaveAlias = () => {
+    if (!editAliasValue.trim()) {
+      alert('Alias cannot be empty');
+      return;
+    }
+    setAlias(editAliasValue);
+    setIsEditingAlias(false);
+  };
+
+  const handleCancelEditAlias = () => {
+    setEditAliasValue(alias);
+    setIsEditingAlias(false);
+  };
+
   const handleStartEditThreshold = () => {
     setEditThresholdValue(safeInfo.threshold);
     setIsEditingThreshold(true);
@@ -126,249 +142,143 @@ export default function AccountPage({ params }: { params: Promise<{ account: str
     setIsEditingThreshold(false);
   };
 
-  const handleAddModule = () => {
-    if (!newModuleAddress.trim()) {
-      alert('Please enter module address');
-      return;
-    }
-    if (!isAddress(newModuleAddress)) {
-      alert('Invalid Ethereum address');
-      return;
-    }
-    if (safeInfo.modules.some((module) => module.toLowerCase() === newModuleAddress.toLowerCase())) {
-      alert('This module already exists');
-      return;
-    }
-    setSafeInfo({
-      ...safeInfo,
-      modules: [...safeInfo.modules, newModuleAddress],
-    });
-    setNewModuleAddress('');
-  };
-
-  const handleRemoveModule = (address: string) => {
-    setSafeInfo({
-      ...safeInfo,
-      modules: safeInfo.modules.filter((module) => module.toLowerCase() !== address.toLowerCase()),
-    });
-  };
-
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 w-full max-w-7xl mx-auto'>
-      {/* Card 1: Basic Info */}
-      <Card className='lg:col-span-1'>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Shield className='h-5 w-5' />
-            Basic Info
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          <div className='space-y-2'>
-            <Label className='text-sm text-muted-foreground'>Account Address</Label>
-            <div className='flex items-center gap-2'>
-              <code className='flex-1 text-sm font-mono bg-muted px-3 py-2 rounded-md break-all'>
-                {safeInfo.address}
-              </code>
-              <Button
-                variant='outline'
-                size='icon'
-                onClick={() => copyToClipboard(safeInfo.address)}
-                className='shrink-0'
-              >
-                {copied === safeInfo.address ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
-              </Button>
-            </div>
-          </div>
-
-          <div className='space-y-2'>
-            <Label className='text-sm text-muted-foreground'>Current Nonce</Label>
-            <div className='text-2xl font-semibold tabular-nums'>{safeInfo.nonce}</div>
-          </div>
-
-          <div className='space-y-2'>
-            <Label className='text-sm text-muted-foreground'>Contract Version</Label>
-            <div>
-              <Badge variant='secondary' className='text-sm px-3 py-1'>
-                v{safeInfo.version}
-              </Badge>
-            </div>
-          </div>
-
-          <div className='space-y-2'>
-            <Label className='text-sm text-muted-foreground'>Chain</Label>
-            <div className='text-base font-medium'>
-              {CHAIN_NAMES[safeInfo.chainId] || 'Unknown Chain'} (ID: {safeInfo.chainId})
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Card 2: Signature Configuration */}
-      <Card className='md:col-span-2 lg:col-span-2'>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Users className='h-5 w-5' />
-            Signature Configuration
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          {/* Threshold Management */}
-          <div className='space-y-3'>
-            <Label className='text-sm text-muted-foreground'>Required Confirmations</Label>
-            {!isEditingThreshold ? (
-              <div className='flex items-center gap-3'>
-                <div className='text-3xl font-bold tabular-nums'>
-                  {safeInfo.threshold} / {safeInfo.owners.length}
-                </div>
-                <Button variant='outline' size='sm' onClick={handleStartEditThreshold}>
-                  <Edit className='h-4 w-4' />
-                  Edit Threshold
+    <div className='w-full h-full max-w-5xl mx-auto'>
+      <FieldSet className='md:flex-row '>
+        <div className='md:w-64 md:shrink-0'>
+          <FieldLegend>Basic Info</FieldLegend>
+          <FieldDescription>View and manage account details and contract information.</FieldDescription>
+        </div>
+        <FieldGroup className='md:flex-1'>
+          {/* Editable on demand: Alias */}
+          <Field>
+            <FieldLabel>Alias</FieldLabel>
+            {isEditingAlias ? (
+              <div className='flex items-center gap-2'>
+                <Input
+                  value={editAliasValue}
+                  onChange={(e) => setEditAliasValue(e.target.value)}
+                  placeholder='My Safe Account'
+                  className='flex-1'
+                />
+                <Button size='icon' variant='ghost' onClick={handleSaveAlias}>
+                  <Check className='h-4 w-4' />
+                </Button>
+                <Button size='icon' variant='ghost' onClick={handleCancelEditAlias}>
+                  <X className='h-4 w-4' />
                 </Button>
               </div>
             ) : (
               <div className='flex items-center gap-2'>
-                <Input
-                  type='number'
-                  min={1}
-                  max={safeInfo.owners.length}
-                  value={editThresholdValue}
-                  onChange={(e) => setEditThresholdValue(Number(e.target.value))}
-                  className='w-24'
-                />
-                <span className='text-muted-foreground'>/ {safeInfo.owners.length}</span>
-                <Button size='sm' onClick={handleSaveThreshold}>
-                  <Check className='h-4 w-4' />
-                  Save
-                </Button>
-                <Button size='sm' variant='outline' onClick={handleCancelEditThreshold}>
-                  <X className='h-4 w-4' />
-                  Cancel
+                <div className='bg-muted px-3 py-2 rounded-md text-sm flex-1'>{alias}</div>
+                <Button size='icon' variant='ghost' onClick={handleStartEditAlias}>
+                  <Edit className='h-4 w-4' />
                 </Button>
               </div>
             )}
+          </Field>
+
+          {/* Read-only: Account Address */}
+          <Field>
+            <FieldLabel>Account Address</FieldLabel>
+            <div className='flex items-center gap-2'>
+              <code className='flex-1 text-sm font-mono bg-muted px-3 py-2 rounded-md break-all'>{account}</code>
+              <CopyButton text={account} />
+            </div>
+          </Field>
+
+          {/* Read-only: Version & Nonce */}
+          <div className='grid grid-cols-2 gap-4'>
+            <Field>
+              <FieldLabel>Contract Version</FieldLabel>
+              <div className='bg-muted px-3 py-2 rounded-md text-sm font-mono'>{safeInfo.version}</div>
+            </Field>
+            <Field>
+              <FieldLabel>Current Nonce</FieldLabel>
+              <div className='bg-muted px-3 py-2 rounded-md text-sm font-mono'>{safeInfo.nonce}</div>
+              <FieldDescription>Increments with each transaction to prevent replay attacks.</FieldDescription>
+            </Field>
           </div>
+        </FieldGroup>
+      </FieldSet>
 
-          <Separator />
+      <FieldSeparator className='my-8' />
 
-          {/* Owner List */}
-          <div className='space-y-3'>
-            <Label className='text-sm text-muted-foreground'>Owners</Label>
+      <FieldSet className='md:flex-row max-w-5xl mx-auto'>
+        {/* Left: Legend & Description */}
+        <div className='md:w-64 md:shrink-0'>
+          <FieldLegend>Signers</FieldLegend>
+          <FieldDescription>
+            Control who can approve transactions and adjust the required confirmation threshold.
+          </FieldDescription>
+        </div>
+
+        {/* Right: Content */}
+        <FieldGroup className='md:flex-1'>
+          {/* Editable on demand: Threshold */}
+          <Field>
+            <FieldLabel>Threshold</FieldLabel>
+            {isEditingThreshold ? (
+              <div className='flex items-center gap-2'>
+                <Input
+                  type='number'
+                  value={editThresholdValue}
+                  onChange={(e) => setEditThresholdValue(parseInt(e.target.value) || 1)}
+                  min={1}
+                  max={safeInfo.owners.length}
+                  className='w-24'
+                />
+                <span className='text-sm text-muted-foreground'>of {safeInfo.owners.length} owner(s)</span>
+                <Button size='icon' variant='ghost' onClick={handleSaveThreshold}>
+                  <Check className='h-4 w-4' />
+                </Button>
+                <Button size='icon' variant='ghost' onClick={handleCancelEditThreshold}>
+                  <X className='h-4 w-4' />
+                </Button>
+              </div>
+            ) : (
+              <div className='flex items-center gap-2'>
+                <div className='bg-muted px-3 py-2 rounded-md text-sm'>
+                  {safeInfo.threshold} of {safeInfo.owners.length} owner(s)
+                </div>
+                <Button size='icon' variant='ghost' onClick={handleStartEditThreshold}>
+                  <Edit className='h-4 w-4' />
+                </Button>
+              </div>
+            )}
+            <FieldDescription>How many owners must approve before a transaction can be executed.</FieldDescription>
+          </Field>
+
+          <FieldSeparator />
+
+          {/* Owners List */}
+          <Field>
+            <FieldLabel>Owner Addresses ({safeInfo.owners.length})</FieldLabel>
             <div className='space-y-2'>
               {safeInfo.owners.map((owner, index) => (
-                <div
-                  key={owner}
-                  className='flex items-center gap-2 p-2 rounded-md border bg-card hover:bg-muted/50 transition-colors'
-                >
-                  <span className='text-sm text-muted-foreground w-6'>{index + 1}.</span>
-                  <code className='flex-1 text-sm font-mono break-all'>{owner}</code>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    className='h-8 w-8 shrink-0'
-                    onClick={() => copyToClipboard(owner)}
-                  >
-                    {copied === owner ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
-                  </Button>
+                <div key={owner} className='flex items-center gap-2 p-2 rounded-md border bg-background'>
+                  <Badge variant='outline' className='shrink-0'>
+                    {index + 1}
+                  </Badge>
+                  <code className='flex-1 text-xs font-mono text-muted-foreground break-all'>{owner}</code>
+                  <CopyButton text={owner} />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant='ghost' size='icon' className='h-8 w-8 shrink-0 text-destructive'>
-                        <Trash2 className='h-4 w-4' />
+                      <Button size='icon' variant='ghost' className='shrink-0'>
+                        <Trash2 className='h-4 w-4 text-destructive' />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Remove Owner?</AlertDialogTitle>
+                        <AlertDialogTitle>Remove Owner</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to remove this owner? This will reduce the number of available signers.
-                          <br />
-                          <code className='text-xs font-mono bg-muted px-2 py-1 rounded mt-2 inline-block'>
-                            {owner}
-                          </code>
+                          Are you sure you want to remove this owner? This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleRemoveOwner(owner)}>Confirm</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Add Owner */}
-          <div className='space-y-2'>
-            <Label className='text-sm text-muted-foreground'>Add New Owner</Label>
-            <div className='flex gap-2'>
-              <Input
-                placeholder='0x...'
-                value={newOwnerAddress}
-                onChange={(e) => setNewOwnerAddress(e.target.value)}
-                className='flex-1 font-mono'
-              />
-              <Button onClick={handleAddOwner}>
-                <Plus className='h-4 w-4' />
-                Add
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Card 3: Modules */}
-      <Card className='md:col-span-2 lg:col-span-3'>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Package className='h-5 w-5' />
-            Modules
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          {safeInfo.modules.length === 0 ? (
-            <div className='text-center py-8 text-muted-foreground'>
-              <Package className='h-12 w-12 mx-auto mb-2 opacity-50' />
-              <p>No modules enabled</p>
-            </div>
-          ) : (
-            <div className='space-y-2'>
-              {safeInfo.modules.map((module, index) => (
-                <div
-                  key={module}
-                  className='flex items-center gap-2 p-2 rounded-md border bg-card hover:bg-muted/50 transition-colors'
-                >
-                  <span className='text-sm text-muted-foreground w-6'>{index + 1}.</span>
-                  <code className='flex-1 text-sm font-mono break-all'>{module}</code>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    className='h-8 w-8 shrink-0'
-                    onClick={() => copyToClipboard(module)}
-                  >
-                    {copied === module ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant='ghost' size='icon' className='h-8 w-8 shrink-0 text-destructive'>
-                        <Trash2 className='h-4 w-4' />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Remove Module?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to remove this module?
-                          <br />
-                          <code className='text-xs font-mono bg-muted px-2 py-1 rounded mt-2 inline-block'>
-                            {module}
-                          </code>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleRemoveModule(module)}>
-                          Confirm
+                        <AlertDialogAction onClick={() => handleRemoveOwner(owner)} className='bg-destructive'>
+                          Remove
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -376,26 +286,32 @@ export default function AccountPage({ params }: { params: Promise<{ account: str
                 </div>
               ))}
             </div>
-          )}
+            <FieldDescription>
+              Each owner can propose and approve transactions. Note: You cannot remove owners if it would reduce the
+              count below the threshold.
+            </FieldDescription>
+          </Field>
 
-          {/* Add Module */}
-          <div className='space-y-2'>
-            <Label className='text-sm text-muted-foreground'>Add New Module</Label>
-            <div className='flex gap-2'>
+          {/* Add New Owner */}
+          <Field>
+            <FieldLabel>Add New Owner</FieldLabel>
+            <div className='flex items-center gap-2'>
               <Input
                 placeholder='0x...'
-                value={newModuleAddress}
-                onChange={(e) => setNewModuleAddress(e.target.value)}
+                value={newOwnerAddress}
+                onChange={(e) => setNewOwnerAddress(e.target.value)}
                 className='flex-1 font-mono'
               />
-              <Button onClick={handleAddModule}>
+              <Button onClick={handleAddOwner} className='gap-2'>
                 <Plus className='h-4 w-4' />
-                Add
+                Add Owner
               </Button>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </Field>
+        </FieldGroup>
+      </FieldSet>
+
+      <FieldSeparator className='my-8' />
     </div>
   );
 }
