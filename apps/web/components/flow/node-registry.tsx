@@ -4,7 +4,7 @@ import { SafeAccountEditor } from './editors/editor-safe-account';
 
 type NodeConfig = {
   label: string;
-  editorComponent: ComponentType<{ data: any; onChange: (data: any) => void }> | null;
+  editorComponent: ComponentType<{ data: any; onChange: (data: any) => void; onAddTokenTransfer?: () => void }> | null;
 };
 
 export const NODE_REGISTRY: Record<string, NodeConfig> = {

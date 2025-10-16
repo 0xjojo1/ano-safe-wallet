@@ -17,9 +17,10 @@ import { Input } from '@workspace/ui/components/input';
 type SafeAccountEditorProps = {
   data: any;
   onChange: (data: any) => void;
+  onAddTokenTransfer?: () => void;
 };
 
-export function SafeAccountEditor({ data, onChange }: SafeAccountEditorProps) {
+export function SafeAccountEditor({ data, onChange, onAddTokenTransfer }: SafeAccountEditorProps) {
   const safeInfo = data.safeInfo as SafeAccountInfo;
 
   return (
@@ -70,7 +71,7 @@ export function SafeAccountEditor({ data, onChange }: SafeAccountEditorProps) {
         <FieldLegend>Actions</FieldLegend>
         <FieldGroup>
           <Field>
-            <Button>Token Transfer</Button>
+            <Button onClick={onAddTokenTransfer}>Token Transfer</Button>
           </Field>
         </FieldGroup>
       </FieldSet>

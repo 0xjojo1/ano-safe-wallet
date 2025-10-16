@@ -11,9 +11,10 @@ export type ActionAreaProps = {
   onClearSelection: () => void;
   onNodeUpdate: (nodeId: string, data: any) => void;
   onDeleteNode: () => void;
+  onAddTokenTransfer: (sourceNodeId: string) => void;
 };
 
-export function ActionArea({ selectedNode, onClearSelection, onNodeUpdate, onDeleteNode }: ActionAreaProps) {
+export function ActionArea({ selectedNode, onClearSelection, onNodeUpdate, onDeleteNode, onAddTokenTransfer }: ActionAreaProps) {
   if (selectedNode) {
     // Node selected - fixed header + scrollable content
     return (
@@ -42,6 +43,11 @@ export function ActionArea({ selectedNode, onClearSelection, onNodeUpdate, onDel
                 <EditorComponent
                   data={selectedNode.data}
                   onChange={(newData) => onNodeUpdate(selectedNode.id, newData)}
+                  onAddTokenTransfer={
+                    selectedNode.type === 'safeAccountNode' 
+                      ? () => onAddTokenTransfer(selectedNode.id)
+                      : undefined
+                  }
                 />
               );
             }

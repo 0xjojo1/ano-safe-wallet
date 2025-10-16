@@ -65,21 +65,13 @@ function buildInitialGraph(): { nodes: Node[]; edges: Edge[] } {
     };
   });
 
-  const tokenTransferNode: Node = {
-    id: 'token-transfer',
-    selected: false,
-    position: { x: 160, y: 0 },
-    data: {},
-    type: 'tokenTransferNode',
-  };
-
   const edges: Edge[] = ownerAddresses.map((_addr, index) => ({
     id: `e-owner-${index}-to-safe`,
     source: `owner-${index}`,
     target: safeId,
   }));
 
-  return { nodes: [safeNode, ...ownerNodes, tokenTransferNode], edges };
+  return { nodes: [safeNode, ...ownerNodes], edges };
 }
 
 const { nodes: initialNodes, edges: initialEdges } = buildInitialGraph();
@@ -88,6 +80,7 @@ export function TransactionPanel() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [tokenTransferCounter, setTokenTransferCounter] = useState(0);
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -132,6 +125,43 @@ export function TransactionPanel() {
       setSelectedNodeId(null);
     }
   }, [selectedNodeId]);
+
+  const handleAddTokenTransfer = useCallback((sourceNodeId: string) => {
+    const sourceNode = nodes.find((n) => n.id === sourceNodeId);
+    if (!sourceNode) return;
+
+    // Generate unique ID
+    const newCounter = tokenTransferCounter + 1;
+    setTokenTransferCounter(newCounter);
+    const newNodeId = `token-transfer-${newCounter}`;
+
+    // Calculate position: to the right of the source node
+    // BaseNode width is 320px (w-80), add 80px gap
+    const newPosition = {
+      x: sourceNode.position.x + 320 + 80,
+      y: sourceNode.position.y + (newCounter - 1) * 50, // Stack nodes vertically with 50px offset
+    };
+
+    // Create new TokenTransfer node
+    const newNode: Node = {
+      id: newNodeId,
+      selected: false,
+      position: newPosition,
+      data: {},
+      type: 'tokenTransferNode',
+    };
+
+    // Create edge from source to new node
+    const newEdge: Edge = {
+      id: `e-${sourceNodeId}-to-${newNodeId}`,
+      source: sourceNodeId,
+      target: newNodeId,
+    };
+
+    // Add node and edge to state
+    setNodes((nds) => [...nds, newNode]);
+    setEdges((eds) => [...eds, newEdge]);
+  }, [nodes, tokenTransferCounter]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -209,6 +239,7 @@ export function TransactionPanel() {
         onClearSelection={handleClearSelection}
         onNodeUpdate={handleNodeUpdate}
         onDeleteNode={handleDeleteNode}
+        onAddTokenTransfer={handleAddTokenTransfer}
       />
     </div>
   );
