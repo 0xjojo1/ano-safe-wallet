@@ -23,7 +23,7 @@ const routeConfig: Record<string, { label: string; clickable?: boolean }> = {
   '/accounts/[account]': { label: 'Details' },
   '/address-book': { label: 'Address Book' },
   '/transactions': { label: 'Transactions', clickable: false },
-  '/transactions/new': { label: 'New Transaction' },
+  '/transactions/build': { label: 'Build' },
   '/transactions/queue': { label: 'Queue' },
   '/transactions/history': { label: 'History' },
   '/settings': { label: 'Settings' },

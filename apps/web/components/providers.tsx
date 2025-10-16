@@ -34,7 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <ChainSelect />
               </div>
             </header>
-            <main className='p-6'>{children}</main>
+            <main className='p-6 h-full'>{children}</main>
           </SidebarInset>
         </SidebarProvider>
       </MyWeb3OnboardProvider>

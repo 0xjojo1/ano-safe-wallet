@@ -1,4 +1,5 @@
 export type SafeAccountInfo = {
+  alias?: string;
   chainId: number;
   chainName: string;
   address: string;

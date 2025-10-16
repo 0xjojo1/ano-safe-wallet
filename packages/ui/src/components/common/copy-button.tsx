@@ -8,9 +8,10 @@ import { cn } from '@workspace/ui/lib/utils';
 export interface CopyButtonProps {
   className?: string;
   text: string;
+  iconClassName?: string;
 }
 
-export function CopyButton({ text, className }: CopyButtonProps) {
+export function CopyButton({ text, className, iconClassName }: CopyButtonProps) {
   const [copied, setCopied] = useState<string | null>(null);
 
   const copyToClipboard = async (text: string) => {
@@ -21,7 +22,11 @@ export function CopyButton({ text, className }: CopyButtonProps) {
 
   return (
     <Button variant='ghost' size='icon' onClick={() => copyToClipboard(text)} className={cn(className, 'shrink-0')}>
-      {copied === text ? <Check className='h-4 w-4 text-green-500' /> : <Copy className='h-4 w-4' />}
+      {copied === text ? (
+        <Check className={cn(iconClassName ?? 'h-4 w-4', 'text-green-500')} />
+      ) : (
+        <Copy className={cn(iconClassName ?? 'h-4 w-4')} />
+      )}
     </Button>
   );
 }

@@ -55,8 +55,8 @@ const baseItems = [
 
 const transactionItems = [
   {
-    title: 'New Transaction',
-    url: '/transactions/new',
+    title: 'Build',
+    url: '/transactions/build',
     icon: Plus,
   },
   {

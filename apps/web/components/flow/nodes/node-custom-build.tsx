@@ -4,7 +4,7 @@ import { Hammer } from 'lucide-react';
 
 import { Button } from '@workspace/ui/components/button';
 
-import { BaseNode } from './BaseNode';
+import { BaseNode } from './node-base';
 
 export function CustomBuildNode({ onRemove }: { onRemove?: () => void }) {
   return (
