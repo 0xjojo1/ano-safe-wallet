@@ -1,30 +1,70 @@
-# shadcn/ui monorepo template
+# Ano Safe Wallet
 
-This template is for creating a monorepo with shadcn/ui.
+> ⚠️ **This project is currently under active development**
 
-## Usage
+Another Safe (Gnosis Safe) wallet interface with a modern, user-friendly experience. Built with Next.js, React, and a visual flow-based transaction builder.
+
+## Features
+
+- 🔐 Safe (Gnosis Safe) multi-signature wallet management
+- 📊 Visual flow-based transaction builder
+- 📇 Address book for contact management
+- 🌐 Multi-chain support with Web3-Onboard integration
+- 🎨 Modern UI built with shadcn/ui components
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with React 19
+- **Blockchain**: viem, Web3-Onboard
+- **UI**: shadcn/ui, Tailwind CSS, Radix UI
+- **Monorepo**: Turborepo with pnpm workspaces
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 20
+- pnpm 10.4.1 or higher
+
+### Installation
 
 ```bash
-pnpm dlx shadcn@latest init
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
 ```
 
-## Adding components
+The development server will start at `http://localhost:3000`.
 
-To add components to your app, run the following command at the root of your `web` app:
+## Development
+
+### Project Structure
+
+This is a monorepo with the following packages:
+
+- `apps/web` - Main Next.js application
+- `packages/ui` - Shared UI components (shadcn/ui)
+- `packages/safe` - Safe wallet integration utilities
+- `packages/types` - Shared TypeScript types
+
+### Adding UI Components
+
+To add new shadcn/ui components:
 
 ```bash
 pnpm dlx shadcn@latest add button -c apps/web
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
+This will place the UI components in the `packages/ui/src/components` directory.
 
-## Tailwind
+### Using Components
 
-Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
-
-## Using components
-
-To use the components in your app, import them from the `ui` package.
+Import components from the `ui` package:
 
 ```tsx
 import { Button } from '@workspace/ui/components/button';
