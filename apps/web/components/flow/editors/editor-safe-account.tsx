@@ -18,9 +18,10 @@ type SafeAccountEditorProps = {
   data: any;
   onChange: (data: any) => void;
   onAddTokenTransfer?: () => void;
+  onAddCustomBuild?: () => void;
 };
 
-export function SafeAccountEditor({ data, onChange, onAddTokenTransfer }: SafeAccountEditorProps) {
+export function SafeAccountEditor({ data, onChange, onAddTokenTransfer, onAddCustomBuild }: SafeAccountEditorProps) {
   const safeInfo = data.safeInfo as SafeAccountInfo;
 
   return (
@@ -72,6 +73,9 @@ export function SafeAccountEditor({ data, onChange, onAddTokenTransfer }: SafeAc
         <FieldGroup>
           <Field>
             <Button onClick={onAddTokenTransfer}>Token Transfer</Button>
+          </Field>
+          <Field>
+            <Button onClick={onAddCustomBuild}>Custom Build</Button>
           </Field>
         </FieldGroup>
       </FieldSet>

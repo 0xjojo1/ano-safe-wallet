@@ -12,9 +12,17 @@ export type ActionAreaProps = {
   onNodeUpdate: (nodeId: string, data: any) => void;
   onDeleteNode: () => void;
   onAddTokenTransfer: (sourceNodeId: string) => void;
+  onAddCustomBuild: (sourceNodeId: string) => void;
 };
 
-export function ActionArea({ selectedNode, onClearSelection, onNodeUpdate, onDeleteNode, onAddTokenTransfer }: ActionAreaProps) {
+export function ActionArea({
+  selectedNode,
+  onClearSelection,
+  onNodeUpdate,
+  onDeleteNode,
+  onAddTokenTransfer,
+  onAddCustomBuild,
+}: ActionAreaProps) {
   if (selectedNode) {
     // Node selected - fixed header + scrollable content
     return (
@@ -44,9 +52,10 @@ export function ActionArea({ selectedNode, onClearSelection, onNodeUpdate, onDel
                   data={selectedNode.data}
                   onChange={(newData) => onNodeUpdate(selectedNode.id, newData)}
                   onAddTokenTransfer={
-                    selectedNode.type === 'safeAccountNode' 
-                      ? () => onAddTokenTransfer(selectedNode.id)
-                      : undefined
+                    selectedNode.type === 'safeAccountNode' ? () => onAddTokenTransfer(selectedNode.id) : undefined
+                  }
+                  onAddCustomBuild={
+                    selectedNode.type === 'safeAccountNode' ? () => onAddCustomBuild(selectedNode.id) : undefined
                   }
                 />
               );

@@ -19,18 +19,18 @@ export function BaseNode({ accent = '#3b82f6', title, icon, actions, children, c
       {/* Accent bar without being affected by padding */}
       <div className='inset-x-0 top-0 h-1 rounded-t-lg' style={{ background: accent }}></div>
       {/* Content wrapper */}
-      <div>
+      <div className='px-3'>
         {/* Ensure all elements are vertically centered for horizontal alignment */}
-        <div className='px-3 py-2 flex items-center gap-3'>
+        <div className='py-2 flex items-center gap-2'>
           {icon ? (
             <div className='h-8 w-8 rounded-full bg-muted/60 flex items-center justify-center'>{icon}</div>
           ) : null}
           <div className='min-w-0 flex-1 flex items-center'>
-            <div className='text-sm font-medium truncate'>{title}</div>
+            <div className='text-sm font-semibold truncate'>{title}</div>
           </div>
           {actions ? <div className='shrink-0 flex items-center'>{actions}</div> : null}
         </div>
-        <div className='px-3 pb-3'>{children}</div>
+        <div className='pb-3'>{children}</div>
       </div>
     </div>
   );

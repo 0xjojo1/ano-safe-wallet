@@ -18,6 +18,7 @@ import {
 import { mockSafeInfo } from '@/lib/mock';
 
 import { ActionArea } from './action-area';
+import { CustomBuildNode, CustomBuildNodeProps } from './nodes/node-custom-build';
 import { OwnerNode, OwnerNodeProps } from './nodes/node-owner';
 import { SafeAccountNode, type SafeAccountNodeProps } from './nodes/node-safe-account';
 import { TokenTransferNode, TokenTransferNodeProps } from './nodes/node-token-transfer';
@@ -31,11 +32,15 @@ function OwnerNodeWrapper({ id, data, selected }: NodeProps) {
 function TokenTransferNodeWrapper({ id, data, selected }: NodeProps) {
   return <TokenTransferNode {...(data as TokenTransferNodeProps)} nodeId={id} selected={selected} />;
 }
+function CustomBuildNodeWrapper({ id, data, selected }: NodeProps) {
+  return <CustomBuildNode {...(data as CustomBuildNodeProps)} nodeId={id} selected={selected} />;
+}
 
 const nodeTypes: NodeTypes = {
   ownerNode: OwnerNodeWrapper,
   safeAccountNode: SafeAccountNodeWrapper,
   tokenTransferNode: TokenTransferNodeWrapper,
+  customBuildNode: CustomBuildNodeWrapper,
 };
 
 // Build initial graph from mockSafeInfo: one Safe node + Owner nodes + edges
@@ -80,7 +85,8 @@ export function TransactionPanel() {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [tokenTransferCounter, setTokenTransferCounter] = useState(0);
+
+  const [transactionNodeCounter, setTransactionNodeCounter] = useState(0);
 
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -126,46 +132,95 @@ export function TransactionPanel() {
     }
   }, [selectedNodeId]);
 
-  const handleAddTokenTransfer = useCallback((sourceNodeId: string) => {
-    const sourceNode = nodes.find((n) => n.id === sourceNodeId);
-    if (!sourceNode) return;
+  const handleAddTokenTransfer = useCallback(
+    (sourceNodeId: string) => {
+      const sourceNode = nodes.find((n) => n.id === sourceNodeId);
+      if (!sourceNode) return;
 
-    // Generate unique ID
-    const newCounter = tokenTransferCounter + 1;
-    setTokenTransferCounter(newCounter);
-    const newNodeId = `token-transfer-${newCounter}`;
+      // Generate unique ID
+      const newCounter = transactionNodeCounter + 1;
+      setTransactionNodeCounter(newCounter);
+      const newNodeId = `transaction-node-${newCounter}`;
 
-    // Calculate position: to the right of the source node
-    // BaseNode width is 320px (w-80), add 80px gap
-    const newPosition = {
-      x: sourceNode.position.x + 320 + 80,
-      y: sourceNode.position.y + (newCounter - 1) * 50, // Stack nodes vertically with 50px offset
-    };
+      // Calculate position: to the right of the source node
+      // BaseNode width is 320px (w-80), add 80px gap
+      const newPosition = {
+        x: sourceNode.position.x + 320 + 80,
+        y: sourceNode.position.y + (newCounter - 1) * 50, // Stack nodes vertically with 50px offset
+      };
 
-    // Create new TokenTransfer node
-    const newNode: Node = {
-      id: newNodeId,
-      selected: false,
-      position: newPosition,
-      data: {},
-      type: 'tokenTransferNode',
-    };
+      // Create new TokenTransfer node
+      const newNode: Node = {
+        id: newNodeId,
+        selected: false,
+        position: newPosition,
+        data: {},
+        type: 'tokenTransferNode',
+      };
 
-    // Create edge from source to new node
-    const newEdge: Edge = {
-      id: `e-${sourceNodeId}-to-${newNodeId}`,
-      source: sourceNodeId,
-      target: newNodeId,
-    };
+      // Create edge from source to new node
+      const newEdge: Edge = {
+        id: `e-${sourceNodeId}-to-${newNodeId}`,
+        source: sourceNodeId,
+        target: newNodeId,
+      };
 
-    // Add node and edge to state
-    setNodes((nds) => [...nds, newNode]);
-    setEdges((eds) => [...eds, newEdge]);
-  }, [nodes, tokenTransferCounter]);
+      // Add node and edge to state
+      setNodes((nds) => [...nds, newNode]);
+      setEdges((eds) => [...eds, newEdge]);
+    },
+    [nodes, transactionNodeCounter]
+  );
+
+  const handleAddCustomBuild = useCallback(
+    (sourceNodeId: string) => {
+      const sourceNode = nodes.find((n) => n.id === sourceNodeId);
+      if (!sourceNode) return;
+
+      // Generate unique ID
+      const newCounter = transactionNodeCounter + 1;
+      setTransactionNodeCounter(newCounter);
+      const newNodeId = `transaction-node-${newCounter}`;
+
+      // Calculate position: to the right of the source node
+      // BaseNode width is 320px (w-80), add 80px gap
+      const newPosition = {
+        x: sourceNode.position.x + 320 + 80,
+        y: sourceNode.position.y + (newCounter - 1) * 300, // Stack nodes vertically with 50px offset
+      };
+
+      // Create new TokenTransfer node
+      const newNode: Node = {
+        id: newNodeId,
+        selected: false,
+        position: newPosition,
+        data: {},
+        type: 'customBuildNode',
+      };
+
+      // Create edge from source to new node
+      const newEdge: Edge = {
+        id: `e-${sourceNodeId}-to-${newNodeId}`,
+        source: sourceNodeId,
+        target: newNodeId,
+      };
+
+      // Add node and edge to state
+      setNodes((nds) => [...nds, newNode]);
+      setEdges((eds) => [...eds, newEdge]);
+    },
+    [nodes, transactionNodeCounter]
+  );
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore events when user is typing in an input or textarea
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+        return;
+      }
+
       // Delete key - remove selected node
       if (event.key === 'Delete' || event.key === 'Backspace') {
         if (selectedNodeId) {
@@ -240,6 +295,7 @@ export function TransactionPanel() {
         onNodeUpdate={handleNodeUpdate}
         onDeleteNode={handleDeleteNode}
         onAddTokenTransfer={handleAddTokenTransfer}
+        onAddCustomBuild={handleAddCustomBuild}
       />
     </div>
   );
