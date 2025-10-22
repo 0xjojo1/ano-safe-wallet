@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useParams } from 'next/navigation';
 
-import { Check, Edit, Package, Plus, Shield, Trash2, Users, X } from 'lucide-react';
+import { Check, Edit, Plus, Trash2, X } from 'lucide-react';
 import { isAddress } from 'viem';
 
 import { SafeAccountInfo } from '@workspace/types/safe/account';
@@ -24,15 +24,12 @@ import { Button } from '@workspace/ui/components/button';
 import { CopyButton } from '@workspace/ui/components/common/copy-button';
 import {
   Field,
-  FieldContent,
   FieldDescription,
-  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,
   FieldSeparator,
   FieldSet,
-  FieldTitle,
 } from '@workspace/ui/components/field';
 import { Input } from '@workspace/ui/components/input';
 import { ScrollArea, ScrollBar } from '@workspace/ui/components/scroll-area';
@@ -128,7 +125,7 @@ export default function AccountPage() {
   };
 
   return (
-    <ScrollArea className='w-full h-[calc(100%-72px)] max-w-5xl mx-auto'>
+    <ScrollArea className='w-full h-[calc(100%-72px)] max-w-4xl mx-auto'>
       <div className='px-4'>
         <FieldSet className='md:flex-row '>
           <div className='md:w-64 md:shrink-0'>

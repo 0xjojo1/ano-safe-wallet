@@ -1,22 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
-import {
-  Background,
-  Controls,
-  Edge,
-  Node,
-  NodeProps,
-  NodeTypes,
-  ReactFlow,
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
-} from '@xyflow/react';
+import { Background, Controls, Edge, Node, NodeProps, NodeTypes, ReactFlow } from '@xyflow/react';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@workspace/ui/components/resizable';
 
+import { TransactionFlowProvider, useTransactionFlow } from '@/contexts/TransactionFlowContext';
 import { mockSafeInfo } from '@/lib/mock';
 
 import { ActionArea } from './action-area';
@@ -32,10 +22,26 @@ function OwnerNodeWrapper({ id, data, selected }: NodeProps) {
   return <OwnerNode {...(data as OwnerNodeProps)} nodeId={id} selected={selected} />;
 }
 function TokenTransferNodeWrapper({ id, data, selected }: NodeProps) {
-  return <TokenTransferNode {...(data as TokenTransferNodeProps)} nodeId={id} selected={selected} />;
+  const { updateNode } = useTransactionFlow();
+  return (
+    <TokenTransferNode
+      {...(data as TokenTransferNodeProps)}
+      nodeId={id}
+      selected={selected}
+      onChange={(newData) => updateNode(id, { ...data, ...newData })}
+    />
+  );
 }
 function CustomBuildNodeWrapper({ id, data, selected }: NodeProps) {
-  return <CustomBuildNode {...(data as CustomBuildNodeProps)} nodeId={id} selected={selected} />;
+  const { updateNode } = useTransactionFlow();
+  return (
+    <CustomBuildNode
+      {...(data as CustomBuildNodeProps)}
+      nodeId={id}
+      selected={selected}
+      onChange={(newData) => updateNode(id, { ...data, ...newData })}
+    />
+  );
 }
 
 const nodeTypes: NodeTypes = {
@@ -45,6 +51,14 @@ const nodeTypes: NodeTypes = {
   customBuildNode: CustomBuildNodeWrapper,
 };
 
+// Layout constants for initial graph
+const LAYOUT_CONSTANTS = {
+  SAFE_NODE_X: 300,
+  SAFE_NODE_Y: 0,
+  OWNER_NODE_X: -160,
+  VERTICAL_GAP: 210,
+} as const;
+
 // Build initial graph from mockSafeInfo: one Safe node + Owner nodes + edges
 function buildInitialGraph(): { nodes: Node[]; edges: Edge[] } {
   const safeId = `safe-${mockSafeInfo.address}`;
@@ -53,20 +67,22 @@ function buildInitialGraph(): { nodes: Node[]; edges: Edge[] } {
   const safeNode: Node = {
     id: safeId,
     selected: false,
-    position: { x: 300, y: 0 },
+    position: { x: LAYOUT_CONSTANTS.SAFE_NODE_X, y: LAYOUT_CONSTANTS.SAFE_NODE_Y },
     data: { safeInfo: mockSafeInfo },
     type: 'safeAccountNode',
   };
 
-  const verticalGap = 210;
-  const baseY = -((ownerAddresses.length - 1) * verticalGap) / 2;
+  const baseY = -((ownerAddresses.length - 1) * LAYOUT_CONSTANTS.VERTICAL_GAP) / 2;
 
   const ownerNodes: Node[] = ownerAddresses.map((ownerAddress, index) => {
     const id = `owner-${index}`;
     return {
       id,
       selected: false,
-      position: { x: -160, y: baseY + index * verticalGap },
+      position: {
+        x: LAYOUT_CONSTANTS.OWNER_NODE_X,
+        y: baseY + index * LAYOUT_CONSTANTS.VERTICAL_GAP,
+      },
       data: { address: ownerAddress },
       type: 'ownerNode',
     };
@@ -81,138 +97,30 @@ function buildInitialGraph(): { nodes: Node[]; edges: Edge[] } {
   return { nodes: [safeNode, ...ownerNodes], edges };
 }
 
-const { nodes: initialNodes, edges: initialEdges } = buildInitialGraph();
+// Inner component that uses the context
+function TransactionPanelInner() {
+  const {
+    nodes,
+    edges,
+    handleNodesChange,
+    handleEdgesChange,
+    handleConnect,
+    selectNode,
+    clearSelection,
+    selectedNodeId,
+    deleteNode,
+  } = useTransactionFlow();
 
-export function TransactionPanel() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-
-  const [transactionNodeCounter, setTransactionNodeCounter] = useState(0);
-
-  const onNodesChange = useCallback(
-    (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    []
+  const onNodeClick = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      selectNode(node.id);
+    },
+    [selectNode]
   );
-  const onEdgesChange = useCallback(
-    (changes: any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    []
-  );
-  const onConnect = useCallback((params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)), []);
-
-  const onNodeClick = useCallback((_event: React.MouseEvent, node: any) => {
-    setSelectedNodeId(node.id);
-    setNodes((nds) =>
-      nds.map((n) => {
-        if (n.id === node.id) {
-          return { ...n, selected: true };
-        }
-        return { ...n, selected: false };
-      })
-    );
-  }, []);
 
   const onPaneClick = useCallback(() => {
-    setSelectedNodeId(null);
-  }, []);
-
-  const handleNodeUpdate = useCallback((nodeId: string, newData: any) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id === nodeId) {
-          return { ...node, data: newData };
-        }
-        return node;
-      })
-    );
-  }, []);
-
-  const handleDeleteNode = useCallback(() => {
-    if (selectedNodeId) {
-      setNodes((nds) => nds.filter((node) => node.id !== selectedNodeId));
-      setSelectedNodeId(null);
-    }
-  }, [selectedNodeId]);
-
-  const handleAddTokenTransfer = useCallback(
-    (sourceNodeId: string) => {
-      const sourceNode = nodes.find((n) => n.id === sourceNodeId);
-      if (!sourceNode) return;
-
-      // Generate unique ID
-      const newCounter = transactionNodeCounter + 1;
-      setTransactionNodeCounter(newCounter);
-      const newNodeId = `transaction-node-${newCounter}`;
-
-      // Calculate position: to the right of the source node
-      // BaseNode width is 320px (w-80), add 80px gap
-      const newPosition = {
-        x: sourceNode.position.x + 320 + 80,
-        y: sourceNode.position.y + (newCounter - 1) * 320, // Stack nodes vertically with 50px offset
-      };
-
-      // Create new TokenTransfer node
-      const newNode: Node = {
-        id: newNodeId,
-        selected: false,
-        position: newPosition,
-        data: {},
-        type: 'tokenTransferNode',
-      };
-
-      // Create edge from source to new node
-      const newEdge: Edge = {
-        id: `e-${sourceNodeId}-to-${newNodeId}`,
-        source: sourceNodeId,
-        target: newNodeId,
-      };
-
-      // Add node and edge to state
-      setNodes((nds) => [...nds, newNode]);
-      setEdges((eds) => [...eds, newEdge]);
-    },
-    [nodes, transactionNodeCounter]
-  );
-
-  const handleAddCustomBuild = useCallback(
-    (sourceNodeId: string) => {
-      const sourceNode = nodes.find((n) => n.id === sourceNodeId);
-      if (!sourceNode) return;
-
-      // Generate unique ID
-      const newCounter = transactionNodeCounter + 1;
-      setTransactionNodeCounter(newCounter);
-      const newNodeId = `transaction-node-${newCounter}`;
-
-      // Calculate position: to the right of the source node
-      // BaseNode width is 320px (w-80), add 80px gap
-      const newPosition = {
-        x: sourceNode.position.x + 320 + 80,
-        y: sourceNode.position.y + (newCounter - 1) * 320, // Stack nodes vertically with 50px offset
-      };
-
-      // Create new TokenTransfer node
-      const newNode: Node = {
-        id: newNodeId,
-        selected: false,
-        position: newPosition,
-        data: {},
-        type: 'customBuildNode',
-      };
-
-      // Create edge from source to new node
-      const newEdge: Edge = {
-        id: `e-${sourceNodeId}-to-${newNodeId}`,
-        source: sourceNodeId,
-        target: newNodeId,
-      };
-
-      // Add node and edge to state
-      setNodes((nds) => [...nds, newNode]);
-      setEdges((eds) => [...eds, newEdge]);
-    },
-    [nodes, transactionNodeCounter]
-  );
+    clearSelection();
+  }, [clearSelection]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -227,88 +135,30 @@ export function TransactionPanel() {
       if (event.key === 'Delete' || event.key === 'Backspace') {
         if (selectedNodeId) {
           event.preventDefault();
-          handleDeleteNode();
+          deleteNode(selectedNodeId);
         }
       }
       // Escape key - clear selection
       if (event.key === 'Escape') {
-        setSelectedNodeId(null);
+        clearSelection();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedNodeId, handleDeleteNode]);
-
-  // Listen for node data changes from inline editing
-  useEffect(() => {
-    const handleNodeDataChange = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      const { nodeId, data } = customEvent.detail;
-      handleNodeUpdate(nodeId, data);
-    };
-
-    window.addEventListener('nodeDataChange', handleNodeDataChange);
-    return () => window.removeEventListener('nodeDataChange', handleNodeDataChange);
-  }, [handleNodeUpdate]);
-
-  const handleClearSelection = useCallback(() => {
-    setSelectedNodeId(null);
-    setNodes((nds) =>
-      nds.map((n) => {
-        return { ...n, selected: false };
-      })
-    );
-  }, []);
-
-  const selectedNode = selectedNodeId ? nodes.find((n) => n.id === selectedNodeId) : null;
+  }, [selectedNodeId, deleteNode, clearSelection]);
 
   return (
     <div className='w-full h-full overflow-hidden'>
-      {/* <div className='w-4/5 h-full border rounded-md'>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
-          fitView
-          fitViewOptions={{
-            padding: 0.3,
-            maxZoom: 1,
-            minZoom: 0.5,
-          }}
-          nodesFocusable={true}
-          elementsSelectable={true}
-          selectNodesOnDrag={false}
-          className='w-full h-full'
-        >
-          <Background />
-          <Controls />
-        </ReactFlow>
-      </div>
-
-      <ActionArea
-        selectedNode={selectedNode}
-        onClearSelection={handleClearSelection}
-        onNodeUpdate={handleNodeUpdate}
-        onDeleteNode={handleDeleteNode}
-        onAddTokenTransfer={handleAddTokenTransfer}
-        onAddCustomBuild={handleAddCustomBuild}
-      /> */}
-
       <ResizablePanelGroup direction='horizontal' className='h-full max-h-full rounded-lg border'>
         <ResizablePanel defaultSize={80}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
             nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
+            onNodesChange={handleNodesChange}
+            onEdgesChange={handleEdgesChange}
+            onConnect={handleConnect}
             onNodeClick={onNodeClick}
             onPaneClick={onPaneClick}
             fitView
@@ -328,16 +178,20 @@ export function TransactionPanel() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-          <ActionArea
-            selectedNode={selectedNode}
-            onClearSelection={handleClearSelection}
-            onNodeUpdate={handleNodeUpdate}
-            onDeleteNode={handleDeleteNode}
-            onAddTokenTransfer={handleAddTokenTransfer}
-            onAddCustomBuild={handleAddCustomBuild}
-          />
+          <ActionArea />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
+  );
+}
+
+// Main export with Provider wrapper
+export function TransactionPanel() {
+  const { nodes: initialNodes, edges: initialEdges } = useMemo(() => buildInitialGraph(), []);
+
+  return (
+    <TransactionFlowProvider initialNodes={initialNodes} initialEdges={initialEdges}>
+      <TransactionPanelInner />
+    </TransactionFlowProvider>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Handle, Position } from '@xyflow/react';
 import { Hammer } from 'lucide-react';
@@ -35,53 +35,68 @@ export type CustomBuildNodeProps = {
   className?: string;
   nodeId?: string;
   selected?: boolean;
+  contractAddress?: string;
+  abiInput?: string;
+  parsedAbi?: ABIFunction[];
+  selectedFunction?: string;
+  functionParams?: Record<string, string>;
+  parseError?: string;
+  onChange?: (data: {
+    contractAddress?: string;
+    abiInput?: string;
+    parsedAbi?: ABIFunction[];
+    selectedFunction?: string;
+    functionParams?: Record<string, string>;
+    parseError?: string;
+  }) => void;
 };
 
-export function CustomBuildNode({ className, nodeId, selected }: CustomBuildNodeProps) {
-  const [contractAddress, setContractAddress] = useState('');
-  const [abiInput, setAbiInput] = useState('');
-  const [parsedAbi, setParsedAbi] = useState<ABIFunction[]>([]);
-  const [selectedFunction, setSelectedFunction] = useState('');
-  const [functionParams, setFunctionParams] = useState<Record<string, string>>({});
-  const [parseError, setParseError] = useState('');
-
+export function CustomBuildNode({
+  className,
+  nodeId,
+  selected,
+  contractAddress = '',
+  abiInput = '',
+  parsedAbi = [],
+  selectedFunction = '',
+  functionParams = {},
+  parseError = '',
+  onChange,
+}: CustomBuildNodeProps) {
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContractAddress(e.target.value);
+    onChange?.({ contractAddress: e.target.value });
   };
 
   const handleAbiChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setAbiInput(e.target.value);
+    onChange?.({ abiInput: e.target.value });
   };
 
   const handleParseAbi = () => {
     try {
-      setParseError('');
       const parsed = JSON.parse(abiInput);
-
-      // Filter only functions
       const functions = Array.isArray(parsed) ? parsed.filter((item: any) => item.type === 'function') : [];
 
-      setParsedAbi(functions);
-
       if (functions.length === 0) {
-        setParseError('No functions found in ABI');
+        onChange?.({ parsedAbi: [], parseError: 'No functions found in ABI' });
+      } else {
+        onChange?.({ parsedAbi: functions, parseError: '' });
       }
     } catch (error) {
-      setParseError('Invalid JSON format');
-      setParsedAbi([]);
+      onChange?.({ parsedAbi: [], parseError: 'Invalid JSON format' });
     }
   };
 
   const handleFunctionChange = (value: string) => {
-    setSelectedFunction(value);
-    setFunctionParams({});
+    onChange?.({ selectedFunction: value, functionParams: {} });
   };
 
   const handleParamChange = (paramName: string, value: string) => {
-    setFunctionParams((prev) => ({
-      ...prev,
-      [paramName]: value,
-    }));
+    onChange?.({
+      functionParams: {
+        ...functionParams,
+        [paramName]: value,
+      },
+    });
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {

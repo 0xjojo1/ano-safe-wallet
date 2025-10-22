@@ -1,6 +1,9 @@
 import { ComponentType } from 'react';
 
+import { CustomBuildEditor } from './editors/editor-custom-build';
+import { OwnerEditor } from './editors/editor-owner';
 import { SafeAccountEditor } from './editors/editor-safe-account';
+import { TokenTransferEditor } from './editors/editor-token-transfer';
 
 type NodeConfig = {
   label: string;
@@ -8,8 +11,6 @@ type NodeConfig = {
     className?: string;
     data: any;
     onChange: (data: any) => void;
-    onAddTokenTransfer?: () => void;
-    onAddCustomBuild?: () => void;
   }> | null;
 };
 
@@ -17,6 +18,18 @@ export const NODE_REGISTRY: Record<string, NodeConfig> = {
   safeAccountNode: {
     label: 'Safe Account',
     editorComponent: SafeAccountEditor,
+  },
+  ownerNode: {
+    label: 'Owner',
+    editorComponent: OwnerEditor,
+  },
+  tokenTransferNode: {
+    label: 'Token Transfer',
+    editorComponent: TokenTransferEditor,
+  },
+  customBuildNode: {
+    label: 'Custom Build',
+    editorComponent: CustomBuildEditor,
   },
   default: {
     label: 'Node',

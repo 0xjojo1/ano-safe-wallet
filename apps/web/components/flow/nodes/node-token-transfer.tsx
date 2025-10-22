@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Handle, Position } from '@xyflow/react';
 import { HandCoins } from 'lucide-react';
 
@@ -14,26 +12,14 @@ export type TokenTransferNodeProps = {
   className?: string;
   nodeId?: string;
   selected?: boolean;
+  recipient?: string;
+  token?: string;
+  amount?: string;
+  onChange?: (data: { recipient?: string; token?: string; amount?: string }) => void;
 };
 
 export function TokenTransferNode(props: TokenTransferNodeProps) {
-  const { className, nodeId, selected } = props;
-
-  const [recipient, setRecipient] = useState('');
-  const [token, setToken] = useState('');
-  const [amount, setAmount] = useState('');
-
-  const handleRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRecipient(e.target.value);
-  };
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(e.target.value);
-  };
-
-  const handleTokenChange = (value: string) => {
-    setToken(value);
-  };
+  const { className, nodeId, selected, recipient = '', token = '', amount = '', onChange } = props;
 
   return (
     <div className={cn('relative group transition-all duration-200', className)}>
@@ -56,14 +42,14 @@ export function TokenTransferNode(props: TokenTransferNodeProps) {
                   placeholder='0x...'
                   required
                   value={recipient}
-                  onChange={handleRecipientChange}
+                  onChange={(e) => onChange?.({ recipient: e.target.value })}
                 />
               </Field>
               <Field className='gap-2'>
                 <FieldLabel htmlFor={`token-${nodeId || 'default'}`} className='text-xs'>
                   Token
                 </FieldLabel>
-                <Select value={token} onValueChange={handleTokenChange}>
+                <Select value={token} onValueChange={(value) => onChange?.({ token: value })}>
                   <SelectTrigger className='text-xs'>
                     <SelectValue placeholder='Select a token' />
                   </SelectTrigger>
@@ -86,7 +72,7 @@ export function TokenTransferNode(props: TokenTransferNodeProps) {
                   placeholder='Enter amount'
                   required
                   value={amount}
-                  onChange={handleAmountChange}
+                  onChange={(e) => onChange?.({ amount: e.target.value })}
                 />
               </Field>
             </FieldSet>

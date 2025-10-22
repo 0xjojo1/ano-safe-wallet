@@ -11,6 +11,10 @@
     "./addressbook/contact": {
       "types": "./src/addressbook/contact.ts",
       "default": "./src/addressbook/contact.ts"
+    },
+    "./flow/node": {
+      "types": "./src/flow/node.ts",
+      "default": "./src/flow/node.ts"
     }
   },
   "devDependencies": {
