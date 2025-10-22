@@ -24,7 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <MyWeb3OnboardProvider>
         <SidebarProvider>
           <AppSidebar />
-          <SidebarInset>
+          <SidebarInset className='h-dvh flex flex-col overflow-hidden'>
             <header>
               <div className='flex items-center justify-between p-4 border-b h-12 flex-shrink-0 gap-2'>
                 <div className='flex items-center gap-2'>

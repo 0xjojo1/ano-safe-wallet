@@ -127,7 +127,7 @@ export function CustomBuildNode({ className, nodeId, selected }: CustomBuildNode
                 {/* ABI TextArea Field */}
                 <Field className='gap-2'>
                   <FieldLabel htmlFor={`abi-input-${nodeId || 'default'}`} className='text-xs'>
-                    Contract ABI (JSON)
+                    <span>Contract ABI (JSON)</span>
                   </FieldLabel>
                   <Textarea
                     id={`abi-input-${nodeId || 'default'}`}
@@ -138,6 +138,7 @@ export function CustomBuildNode({ className, nodeId, selected }: CustomBuildNode
                     onChange={handleAbiChange}
                     onMouseDown={handleMouseDown}
                     onPointerDown={handlePointerDown}
+                    onMouseDownCapture={handleMouseDown}
                   />
                   <Button
                     type='button'

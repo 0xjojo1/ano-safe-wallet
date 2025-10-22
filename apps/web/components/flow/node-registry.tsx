@@ -5,6 +5,7 @@ import { SafeAccountEditor } from './editors/editor-safe-account';
 type NodeConfig = {
   label: string;
   editorComponent: ComponentType<{
+    className?: string;
     data: any;
     onChange: (data: any) => void;
     onAddTokenTransfer?: () => void;

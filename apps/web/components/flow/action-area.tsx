@@ -1,4 +1,4 @@
-import { Copy, Edit, Trash2, X } from 'lucide-react';
+import { Copy, Edit, SquareKanban, SquarePen, Trash2, X } from 'lucide-react';
 
 import { Button } from '@workspace/ui/components/button';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
@@ -26,22 +26,26 @@ export function ActionArea({
   if (selectedNode) {
     // Node selected - fixed header + scrollable content
     return (
-      <div className='w-1/5 h-full border rounded-md p-4 flex flex-col'>
+      <div className='h-full flex flex-col max-h-[calc(100vh-105px)]'>
         {/* Fixed Header */}
-        <div className='space-y-2 shrink-0'>
+        <div className='px-4 pt-4 space-y-2 '>
           <div className='flex items-center justify-between'>
-            <h3 className='text-md font-semibold'>Node Details</h3>
+            <span className='flex gap-2 justify-center items-center'>
+              <SquarePen className='size-4' />
+              <h3 className='text-sm font-semibold'>Node Details</h3>
+            </span>
             <Button size='icon' variant='ghost' onClick={onClearSelection}>
               <X className='size-4' />
             </Button>
           </div>
+
+          {/* Node Overview */}
+          <div></div>
         </div>
 
-        <Separator className='my-3 shrink-0' />
+        <Separator className='my-3' />
 
-        {/* Scroll Area */}
-        <ScrollArea>
-          {/* Node-specific Editor */}
+        <ScrollArea className='flex-1 min-h-0'>
           {(() => {
             const config = getNodeConfig(selectedNode.type);
             const EditorComponent = config.editorComponent;
@@ -61,6 +65,7 @@ export function ActionArea({
               );
             }
           })()}
+          <div className='mb-16' />
         </ScrollArea>
       </div>
     );
@@ -69,11 +74,13 @@ export function ActionArea({
   // No selection - show global actions
 
   return (
-    <div className='w-1/5 h-full border rounded-md p-4 flex flex-col'>
-      {/* Fixed Header */}
-      <div className='space-y-2 shrink-0'>
+    <div className='h-full  flex flex-col'>
+      <div className='px-4 pt-4 space-y-2 '>
         <div className='flex items-center justify-between'>
-          <h3 className='text-sm font-semibold'>Action Panel</h3>
+          <span className='flex gap-2 justify-center items-center'>
+            <SquareKanban className='size-4' />
+            <h3 className='text-sm font-semibold'>Overview</h3>
+          </span>
         </div>
       </div>
     </div>
